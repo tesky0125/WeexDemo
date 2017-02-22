@@ -9,7 +9,7 @@ import com.taobao.weex.common.WXException;
 import com.taobao.weex.utils.WXLogUtils;
 
 /**
- * Created by king on 16/7/3.
+ * Created by rylanyan on 16/7/3.
  */
 public class WXApplication extends Application {
     @Override

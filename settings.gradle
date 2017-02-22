@@ -1,4 +1,5 @@
 include ':app'
 
-include ":weex_sdk"
-project(":weex_sdk").projectDir=new File("./sdk")
+//Need copy weex android sdk to root directory
+//include ":weex_sdk"
+//project(":weex_sdk").projectDir=new File("./sdk")

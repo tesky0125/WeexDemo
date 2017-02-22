@@ -13,7 +13,7 @@ import java.util.Map;
  * 见：
  *  https://github.com/weexteam/article/issues/27
  *
- * Created by edc on 14/11/2016.
+ * Created by rylanyan on 14/11/2016.
  */
 
 public class MyModule extends WXModule {

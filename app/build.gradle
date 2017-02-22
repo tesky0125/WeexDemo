@@ -26,10 +26,10 @@ dependencies {
 
 
     /*source dependency*/
-    compile project(':weex_sdk')
+//    compile project(':weex_sdk')
 
     /*library dependency*/
-//    compile 'com.taobao.android:weex_sdk:0.5.1'
+    compile 'com.taobao.android:weex_sdk:0.5.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.alibaba:fastjson:1.1.46.android'
 }
