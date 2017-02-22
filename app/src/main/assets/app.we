@@ -1,0 +1,156 @@
+<template>
+  <div>
+    <!--分割线-->
+    <div style="background-color: black; height: 3; width: 1000;"></div>
+
+    <scroller>
+      <refresh class="refresh-view" display="{{refresh_display}}" onrefresh="onrefresh">
+        <loading-indicator class="indicator" ></loading-indicator>
+        <text class="refresh-arrow" style="text-align: center; color:rgb(238, 162, 54)" if="{{(refresh_display==='hide')}}">Pull To Refresh</text>
+      </refresh>
+
+      <container repeat="{{newsList}}" rowid="{{objectId}}" onclick="oncellclick">
+        <container class="cell">
+          <image class="thumb" src="{{image.url}}" resize="cover"></image>
+        </container>
+        <container>
+          <text class="title" onclick="ontitleclick">{{title}}</text>
+        </container>
+        <text class="separator"></text>
+      </container>
+
+      <loading class="loading-view" display="{{loading_display}}" onloading="onloading">
+        <loading-indicator class="indicator" ></loading-indicator>
+      </loading>
+    </scroller>
+  </div>
+
+</template>
+
+<style>
+  .cell {
+    width: 750;
+    flex-direction: row;
+    background-color: #bbb;
+    margin-top: 20;
+  }
+
+  .thumb {
+    width: 750;
+    height: 200;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 30;
+  }
+
+  .refresh-view {
+    height: 120px;
+    width: 750px;
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+  }
+
+ .refresh-arrow {
+    font-size: 30px;
+    color: #45b5f0;
+  }
+
+  .loading-view {
+    width: 750;
+    height: 100;
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+  }
+
+  .indicator {
+    height: 60;
+    width: 60;
+    color: #889967;
+  }
+</style>
+
+<script>
+require('weex-components');
+const stream = require('@weex-module/stream');
+
+module.exports = {
+    data: {
+      refresh_display: 'hide',
+      loading_display: 'hide',
+      newsList: [],
+      page: 1
+    },
+    ready () {
+      this.fetch()
+    },
+    methods: {
+      onrefresh (e) {
+        this.refresh_display = 'show'
+        this.$call('modal', 'toast', {
+          'message': 'onrefresh'
+        })
+        this.newsList = []
+        this.page = 1
+        this.fetch()
+      },
+      onloading (e) {
+        this.loading_display = 'show'
+        this.$call('modal', 'toast', {
+          'message': 'onloading'
+        })
+        this.page++
+        this.fetch()
+      },
+      fetch () {
+        console.log('fetching...')
+        stream.fetch({
+          method: 'GET',
+          url: `https://aotu.jd.com/aurora/api/newsView?channelKey=FRONTEND&page=${this.page}`,
+          type:'json'
+        }, response => {
+          response.data.forEach(row => {
+            this.newsList.push({
+              objectId: row.objectId,
+              title: row.title,
+              image: {url: row.image.url}
+            })
+          })
+          console.log('fetched...', this.newsList.length)
+          // 重置刷新状态
+          this.refresh_display = 'hide'
+          this.loading_display = 'hide'
+        }, response => {
+          console.log("current bytes received:" + response.length)
+        })
+      },
+      oncellclick (e) {
+        this.$call('modal', 'toast', {
+          'message': 'row ' + e.target.attr.rowid + ' clicked',
+          'duration': 2.0
+        })
+      },
+      ontitleclick () {
+        // 调用原生方法，见 MyModule.java
+        let MyModule = require('@weex-module/myModule')
+
+        MyModule.showToast('同步方法') // 同步方法
+
+        MyModule.runAsync("异步方法", function(ts){  // 异步方法
+            MyModule.showToast(`异步回来了，${ts.ts}, ${ts.sin}`)
+        })
+      }
+    }
+}
+</script>
